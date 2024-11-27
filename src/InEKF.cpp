@@ -249,6 +249,11 @@ Eigen::MatrixXd InEKF::DiscreteNoiseMatrix(Eigen::MatrixXd& Phi, double dt){
 // InEKF Propagation - Inertial Data
 void InEKF::Propagate(const Eigen::Matrix<double,6,1>& imu, double dt) {
 
+    // Eigen::Matrix<double,6,1> Theta_F;
+    // Theta_F << 0.00603,0.00684,0.00274,-0.00116,0.00051,-0.05850;
+
+    // state_.setTheta(Theta_F);
+
     // Bias corrected IMU measurements
     Eigen::Vector3d w = imu.head(3)  - state_.getGyroscopeBias();    // Angular Velocity
     Eigen::Vector3d a = imu.tail(3) - state_.getAccelerometerBias(); // Linear Acceleration
@@ -318,7 +323,8 @@ void InEKF::CorrectRightInvariant(const Eigen::MatrixXd& Z, const Eigen::MatrixX
     int dimP = state_.dimP();
 
     // Remove bias
-    Theta = Eigen::Matrix<double,6,1>::Zero();
+    // Theta = Eigen::Matrix<double,6,1>::Zero();
+
     P.block<6,6>(dimP-dimTheta,dimP-dimTheta) = 0.0001*Eigen::Matrix<double,6,6>::Identity();
     P.block(0,dimP-dimTheta,dimP-dimTheta,dimTheta) = Eigen::MatrixXd::Zero(dimP-dimTheta,dimTheta);
     P.block(dimP-dimTheta,0,dimTheta,dimP-dimTheta) = Eigen::MatrixXd::Zero(dimTheta,dimP-dimTheta);
